@@ -13,7 +13,7 @@ export function Navigation({ items }: NavigationProps) {
           <li key={item.href}>
             <Link
               href={item.href}
-              className="text-gray-500 transition hover:text-gray-500/75"
+              className="text-gray-500 text-md transition hover:text-gray-500/75"
             >
               {item.label}
             </Link>

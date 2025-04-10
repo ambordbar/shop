@@ -3,23 +3,24 @@
 import { useState, useRef, useEffect } from "react";
 import { useFilterStore } from "../filter-store";
 
-export default function PriceFilter() {
+interface PriceFilterProps {
+  minPrice: number;
+  maxPrice: number;
+}
+
+export default function PriceFilter({ minPrice, maxPrice }: PriceFilterProps) {
   const [priceOpen, setPriceOpen] = useState(false);
   const [priceRange, setPriceRange] = useState({
-    min: 0,
-    max: 1000,
+    min: minPrice,
+    max: maxPrice,
   });
 
   const {
-    minPrice,
-    maxPrice,
     selectedMinPrice,
     selectedMaxPrice,
     setPriceRange: storeSetPriceRange,
     resetPriceRange,
   } = useFilterStore((state) => ({
-    minPrice: state.minPrice,
-    maxPrice: state.maxPrice,
     selectedMinPrice: state.selectedMinPrice,
     selectedMaxPrice: state.selectedMaxPrice,
     setPriceRange: state.setPriceRange,
@@ -194,7 +195,7 @@ export default function PriceFilter() {
       </button>
 
       {priceOpen && (
-        <div className="absolute z-50 mt-1 bg-white border rounded-lg shadow-lg p-4 w-80">
+        <div className="absolute right-0 z-50 mt-1 bg-white rounded-lg shadow-lg p-4 w-80">
           <div className="space-y-4 mt-8">
             {/* Custom dual range slider */}
             <div className="relative h-2 bg-gray-200 rounded-full mb-6 mt-6">
@@ -215,7 +216,7 @@ export default function PriceFilter() {
 
               {/* Min range thumb tooltip */}
               <div
-                className="absolute bg-white border border-gray-200 text-sm text-gray-800 py-1 px-2 rounded-lg mb-3 -mt-10"
+                className="absolute bg-white border ms-7 border-gray-200 text-sm text-gray-800 py-1 px-2 rounded-lg mb-3 -mt-10"
                 style={{
                   left: getTooltipPosition(true),
                   transform: "translateX(-50%)",

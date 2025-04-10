@@ -68,25 +68,86 @@ const hasNonDefaultValues = (state: Partial<FilterState>): boolean => {
   });
 };
 
+const stateToUrlParams = (state: PersistedFilterState): URLSearchParams => {
+  const params = new URLSearchParams();
+
+  if (state.searchQuery) {
+    params.set("q", state.searchQuery);
+  }
+
+  if (state.selectedCategory) {
+    params.set("category", state.selectedCategory.id.toString());
+  }
+
+  if (state.selectedMinPrice > defaultState.selectedMinPrice) {
+    params.set("price[min]", state.selectedMinPrice.toString());
+  }
+
+  if (state.selectedMaxPrice < defaultState.selectedMaxPrice) {
+    params.set("price[max]", state.selectedMaxPrice.toString());
+  }
+
+  if (state.isTopRated) {
+    params.set("has_top_rate", "1");
+  }
+
+  if (state.priceSort) {
+    params.set("sort", state.priceSort === "asc" ? "price_asc" : "price_desc");
+  }
+
+  return params;
+};
+
+const urlParamsToState = (
+  params: URLSearchParams
+): Partial<PersistedFilterState> => {
+  const state: Partial<PersistedFilterState> = {};
+
+  const searchQuery = params.get("q");
+  if (searchQuery) {
+    state.searchQuery = searchQuery;
+  }
+
+  const categoryId = params.get("category");
+  if (categoryId) {
+    state.selectedCategory = { id: categoryId, name: "" }; // name will be populated by the component
+  }
+
+  const minPrice = params.get("price[min]");
+  if (minPrice) {
+    state.selectedMinPrice = Number(minPrice);
+  }
+
+  const maxPrice = params.get("price[max]");
+  if (maxPrice) {
+    state.selectedMaxPrice = Number(maxPrice);
+  }
+
+  const hasTopRate = params.get("has_top_rate");
+  if (hasTopRate === "1") {
+    state.isTopRated = true;
+  }
+
+  const sort = params.get("sort");
+  if (sort === "price_asc") {
+    state.priceSort = "asc";
+  } else if (sort === "price_desc") {
+    state.priceSort = "desc";
+  }
+
+  return state;
+};
+
 const persistentStorage: StateStorage = {
   getItem: (key): string => {
     if (typeof window === "undefined") return "";
 
-    // Check URL first
-    if (getUrlSearch()) {
-      const searchParams = new URLSearchParams(getUrlSearch());
-      const storedValue = searchParams.get(key);
-      if (storedValue) {
-        try {
-          const parsed = JSON.parse(storedValue);
-          // Only return if there are non-default values
-          if (parsed.state && hasNonDefaultValues(parsed.state)) {
-            return storedValue;
-          }
-        } catch (e) {
-          console.error("Error parsing URL state:", e);
-        }
-      }
+    // Get state from URL parameters
+    const searchParams = new URLSearchParams(getUrlSearch());
+    const stateFromUrl = urlParamsToState(searchParams);
+
+    if (Object.keys(stateFromUrl).length > 0) {
+      return JSON.stringify({ state: stateFromUrl });
     }
 
     // Fallback to localStorage
@@ -94,7 +155,6 @@ const persistentStorage: StateStorage = {
     if (localValue) {
       try {
         const parsed = JSON.parse(localValue);
-        // Only return if there are non-default values
         if (parsed.state && hasNonDefaultValues(parsed.state)) {
           return localValue;
         }
@@ -105,49 +165,36 @@ const persistentStorage: StateStorage = {
 
     return "";
   },
+
   setItem: (key, newValue): void => {
     if (typeof window === "undefined") return;
 
     try {
       const parsed = JSON.parse(newValue);
-      // Only update URL and storage if there are non-default values
+
       if (parsed.state && hasNonDefaultValues(parsed.state)) {
-        // Update URL
-        const searchParams = new URLSearchParams(getUrlSearch());
-        searchParams.set(key, newValue);
-        window.history.replaceState(null, "", `?${searchParams.toString()}`);
+        // Update URL with clean parameters
+        const params = stateToUrlParams(parsed.state);
+        const newUrl =
+          window.location.pathname +
+          (params.toString() ? `?${params.toString()}` : "");
+        window.history.replaceState(null, "", newUrl);
 
         // Update localStorage
         localStorage.setItem(key, newValue);
       } else {
-        // If all values are default, remove from URL and storage
-        const searchParams = new URLSearchParams(getUrlSearch());
-        searchParams.delete(key);
-        window.history.replaceState(
-          null,
-          "",
-          searchParams.toString()
-            ? `?${searchParams.toString()}`
-            : window.location.pathname
-        );
+        // If all values are default, clean up URL and storage
+        window.history.replaceState(null, "", window.location.pathname);
         localStorage.removeItem(key);
       }
     } catch (e) {
       console.error("Error processing state:", e);
     }
   },
+
   removeItem: (key): void => {
     if (typeof window === "undefined") return;
-
-    const searchParams = new URLSearchParams(getUrlSearch());
-    searchParams.delete(key);
-    window.history.replaceState(
-      null,
-      "",
-      searchParams.toString()
-        ? `?${searchParams.toString()}`
-        : window.location.pathname
-    );
+    window.history.replaceState(null, "", window.location.pathname);
     localStorage.removeItem(key);
   },
 };
@@ -178,12 +225,18 @@ export const useFilterStore = createWithEqualityFn<FilterState>(
           selectedMaxPrice: max,
         }),
       setDefaultPriceRange: (min: number, max: number) =>
-        set({
+        set((state) => ({
           minPrice: min,
           maxPrice: max,
-          selectedMinPrice: min,
-          selectedMaxPrice: max,
-        }),
+          selectedMinPrice:
+            state.selectedMinPrice === defaultState.selectedMinPrice
+              ? min
+              : state.selectedMinPrice,
+          selectedMaxPrice:
+            state.selectedMaxPrice === defaultState.selectedMaxPrice
+              ? max
+              : state.selectedMaxPrice,
+        })),
       resetPriceRange: () =>
         set((state: FilterState) => ({
           selectedMinPrice: state.minPrice,

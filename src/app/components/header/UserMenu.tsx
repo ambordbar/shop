@@ -15,7 +15,7 @@ export function UserMenu({ items }: UserMenuProps) {
     <div className="hidden md:relative md:block">
       <button
         type="button"
-        className="overflow-hidden rounded-full border border-gray-300 shadow-inner"
+        className="overflow-hidden rounded-full border border-gray-300 shadow-inner flex items-center justify-center"
         onClick={() => setShowPopUp(!showPopUp)}
       >
         <span className="sr-only">Toggle dashboard menu</span>
@@ -30,7 +30,7 @@ export function UserMenu({ items }: UserMenuProps) {
 
       {showPopUp && (
         <div
-          className="absolute end-0 z-10 mt-0.5 w-56 divide-y divide-gray-100 rounded-md border border-gray-100 bg-white shadow-lg "
+          className="absolute end-0 z-10 mt-0.5 w-56 divide-y divide-gray-100 rounded-md border border-gray-100 bg-white shadow-lg"
           role="menu"
         >
           <div className="p-2">

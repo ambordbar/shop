@@ -6,7 +6,7 @@ import { navigationItems, userMenuItems } from "./constants";
 
 export default function Header() {
   return (
-    <header className="bg-white">
+    <header>
       <div className="mx-auto max-w-screen-xl">
         <div className="flex h-16 items-center justify-between">
           <div className="flex-1 md:flex md:items-center md:gap-12">

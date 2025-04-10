@@ -63,23 +63,43 @@ export default function CategoryFilter({
         {selectedCategory && (
           <span className="text-blue-600">: {selectedCategory.name}</span>
         )}
-        <svg
-          className="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M19 9l-7 7-7-7"
-          />
-        </svg>
+        {selectedCategory ? (
+          <svg
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCategorySelect(null);
+            }}
+            className="w-4 h-4 cursor-pointer"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        ) : (
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        )}
       </button>
 
       {categoryOpen && (
-        <div className="absolute z-10 mt-1 bg-white border rounded-lg shadow-lg w-56 max-h-60 overflow-y-auto">
+        <div className="absolute z-50 mt-1 bg-white rounded-lg shadow-lg w-56 max-h-60 overflow-y-auto">
           <div className="p-2">
             <button
               onClick={() => handleCategorySelect(null)}
