@@ -2,19 +2,13 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useFilterStore } from "../filter-store";
-
-interface CategoryOption {
-  id: string | number;
-  name: string;
-}
-
-interface CategoryFilterProps {
-  categories?: CategoryOption[];
-}
+import { Category } from "@/types/category";
 
 export default function CategoryFilter({
   categories = [],
-}: CategoryFilterProps) {
+}: {
+  categories?: Category[];
+}) {
   const [categoryOpen, setCategoryOpen] = useState(false);
   const { selectedCategory, setSelectedCategory } = useFilterStore((state) => ({
     selectedCategory: state.selectedCategory,
@@ -23,7 +17,6 @@ export default function CategoryFilter({
 
   const categoryRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -40,13 +33,9 @@ export default function CategoryFilter({
     };
   }, []);
 
-  // Category handlers
-  const handleCategorySelect = (category: CategoryOption | null) => {
+  const handleCategorySelect = (category: Category | null) => {
     setSelectedCategory(category);
     setCategoryOpen(false);
-
-    // ここで必要な処理を実行
-    console.log("Category selected:", category?.name || "All");
   };
 
   return (
