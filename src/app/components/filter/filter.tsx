@@ -9,7 +9,7 @@ import { useFilterStore } from "./filter-store";
 import { useEffect } from "react";
 
 interface CategoryOption {
-  id: string | number;
+  id: string;
   name: string;
 }
 
@@ -34,7 +34,6 @@ export default function Filter({
     setDefaultPriceRange(minPrice, maxPrice);
   }, [minPrice, maxPrice, setDefaultPriceRange]);
 
-  console.log(minPrice, maxPrice);
   return (
     <div className={`w-full mt-2 ${className}`}>
       <div className="flex flex-col gap-2">

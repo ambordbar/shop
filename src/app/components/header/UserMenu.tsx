@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { UserMenuItem } from "./types";
 import { useState } from "react";
+import ShoppingCart from "../Shopping cart/ShoppingCart";
+import { UserMenuItem } from "./types";
 
 interface UserMenuProps {
   items: UserMenuItem[];
@@ -11,22 +12,28 @@ interface UserMenuProps {
 
 export function UserMenu({ items }: UserMenuProps) {
   const [showPopUp, setShowPopUp] = useState(false);
+
   return (
-    <div className="hidden md:relative md:block">
-      <button
-        type="button"
-        className="overflow-hidden rounded-full border border-gray-300 shadow-inner flex items-center justify-center"
-        onClick={() => setShowPopUp(!showPopUp)}
-      >
-        <span className="sr-only">Toggle dashboard menu</span>
-        <Image
-          src="https://images.unsplash.com/photo-1707343843437-caacff5cfa74?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          alt="User avatar"
-          width={40}
-          height={40}
-          className="size-10 object-cover"
-        />
-      </button>
+    <div className="hidden md:relative md:block z-100">
+      <div className="hidden md:relative md:flex md:items-center md:gap-4">
+        <ShoppingCart />
+
+        <button
+          type="button"
+          className="relative w-10 h-10 overflow-hidden rounded-full border border-gray-300 shadow-inner flex items-center justify-center"
+          onClick={() => setShowPopUp(!showPopUp)}
+        >
+          <span className="sr-only">Toggle dashboard menu</span>
+          <Image
+    src="https://images.unsplash.com/photo-1707343843437-caacff5cfa74?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    alt="User avatar"
+    fill
+    className="object-cover"
+    sizes="40px"
+    priority // به خاطر اینکه تو هدره
+  />
+        </button>
+      </div>
 
       {showPopUp && (
         <div
@@ -59,12 +66,12 @@ export function UserMenu({ items }: UserMenuProps) {
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
                   stroke="currentColor"
-                  className="size-4"
+                  className="w-4 h-4"
                 >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
+                    d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
                   />
                 </svg>
                 Logout
@@ -76,3 +83,5 @@ export function UserMenu({ items }: UserMenuProps) {
     </div>
   );
 }
+
+export default UserMenu;
