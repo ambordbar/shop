@@ -4,6 +4,7 @@ import { getCategories } from "../action/getcategory";
 import { getMinAndMaxPrice } from "../action/getMinAndMaxPrice";
 import Filter from "../components/filter/filter";
 
+
 export default async function ProductsPage() {
   const [products, categories, priceRange] = await Promise.all([
     getProducts(),
