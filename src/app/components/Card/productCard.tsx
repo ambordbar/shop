@@ -1,6 +1,8 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import { Product } from "@/types";
+import useCartStore from "../../api/Shopping cart/cartStore";
 
 interface ProductCardProps {
   product: Product;
@@ -8,13 +10,15 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { id, title, price, image, rating, category } = product;
-
+  const addProduct = useCartStore((state) => state.addProduct);
   const isNew = rating.rate >= 4.5;
 
   return (
     <Link
       href={`/products/${id}`}
-      className="group relative block overflow-hidden"
+      className="group rounded-lg relative block overflow-hidden"
+      target="_blank"
+      rel="noopener noreferrer"
     >
       <button
         className="absolute end-4 top-4 z-10 rounded-full bg-white p-1.5 text-gray-900 transition hover:text-gray-900/75"
@@ -77,14 +81,18 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
         </div>
 
-        <form className="mt-4">
+        <div className="mt-4 ">
           <button
-            type="submit"
+            type="button"
             className="block w-full rounded-sm bg-yellow-400 p-4 text-sm font-medium hover:bg-yellow-500"
+            onClick={(e) => {
+              e.preventDefault();
+              addProduct(product);
+            }}
           >
             Add to Cart
           </button>
-        </form>
+        </div>
       </div>
     </Link>
   );

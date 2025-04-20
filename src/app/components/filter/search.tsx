@@ -19,11 +19,11 @@ export default function SearchBox() {
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
         placeholder="search product to find this"
-        className="w-full px-4 py-2 text-md border rounded-lg border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-transparent placeholder:text-gray-400"
+        className="w-full px-4 py-2 text-md border rounded-lg bg-white border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-transparent placeholder:text-gray-400"
       />
       <button
         type="submit"
-        className="absolute inset-y-0 right-0 flex items-center gap-2 m-1 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        className="absolute inset-y-0 right-0 flex items-center gap-2 m-1 px-4 border border-yellow-600 text-yellow-600 rounded-lg hover:bg-yellow-100 hover:border-none transition-colors"
         aria-label="search"
       >
         <span className="text-sm">Search</span>

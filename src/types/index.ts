@@ -15,8 +15,22 @@ export const ProductSchema = z.object({
   category: z.string(),
   image: z.string().url(),
   rating: RatingSchema,
+  quantity: z.number().int().positive().optional(),
+});
+
+// Cart item schema
+export const CartItemSchema = ProductSchema.extend({
+  quantity: z.number().int().positive(),
 });
 
 // TypeScript types derived from Zod schemas
 export type Rating = z.infer<typeof RatingSchema>;
 export type Product = z.infer<typeof ProductSchema>;
+export type CartItem = z.infer<typeof CartItemSchema>;
+
+// Customer info type
+export interface CustomerInfo {
+  name: string;
+  address: string;
+  phone: string;
+}

@@ -42,15 +42,15 @@ export default function CategoryFilter({
     <div className="relative" ref={categoryRef}>
       <button
         onClick={() => setCategoryOpen(!categoryOpen)}
-        className={`px-4 py-2 border border-gray-400 rounded-lg flex items-center gap-2 ${
-          selectedCategory ? "bg-blue-50 border-blue-300" : "bg-white"
+        className={`px-4 py-2 border border-gray-300 rounded-lg flex items-center gap-2 ${
+          selectedCategory ? "bg-green-500" : "bg-white"
         }`}
       >
-        <span className={selectedCategory ? "text-blue-600" : "text-gray-500"}>
+        <span className={selectedCategory ? "text-white" : "text-gray-500"}>
           Category
         </span>
         {selectedCategory && (
-          <span className="text-blue-600">: {selectedCategory.name}</span>
+          <span className="text-white">: {selectedCategory.name}</span>
         )}
         {selectedCategory ? (
           <svg
@@ -68,6 +68,7 @@ export default function CategoryFilter({
               strokeLinejoin="round"
               strokeWidth="2"
               d="M6 18L18 6M6 6l12 12"
+              color="white"
             />
           </svg>
         ) : (

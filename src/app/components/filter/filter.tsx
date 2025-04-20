@@ -36,18 +36,15 @@ export default function Filter({
 
   return (
     <div className={`w-full mt-2 ${className}`}>
-      <div className="flex flex-col gap-2">
-        <div className="w-full">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8">
+        <div className="">
           <SearchBox />
         </div>
-
-        <div className="w-full">
-          <div className="flex flex-wrap gap-3 justify-end">
-            <CategoryFilter categories={categories} />
-            <PriceFilter minPrice={minPrice} maxPrice={maxPrice} />
-            <RatingFilter />
-            <PriceSortFilter />
-          </div>
+        <div className="flex flex-row gap-2 lg:col-span-2">
+          <CategoryFilter categories={categories} />
+          <PriceFilter minPrice={minPrice} maxPrice={maxPrice} />
+          <RatingFilter />
+          <PriceSortFilter />
         </div>
       </div>
     </div>

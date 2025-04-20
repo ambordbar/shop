@@ -14,9 +14,7 @@ export async function getCategories(): Promise<Category[]> {
       return cachedCategories;
     }
 
-    const res = await fetch("https://fakestoreapi.com/products/categories", {
-      next: { revalidate: 3600 },
-    });
+    const res = await fetch("https://fakestoreapi.com/products/categories");
 
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);

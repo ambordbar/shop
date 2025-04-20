@@ -147,7 +147,7 @@ export default function PriceFilter({ minPrice, maxPrice }: PriceFilterProps) {
     <div className="relative" ref={priceRef}>
       <button
         onClick={() => setPriceOpen(!priceOpen)}
-        className={`px-4 py-2 border border-gray-400 rounded-lg flex items-center gap-2 ${
+        className={`px-4 py-2 border border-gray-300 rounded-lg flex items-center gap-2 ${
           isFiltered ? "bg-green-500 border-green-500" : "bg-white"
         }`}
       >

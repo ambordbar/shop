@@ -1,25 +1,21 @@
-// app/products/[id]/page.tsx
 import Image from "next/image";
 import { getProduct } from "@/app/action/getSingleProduct";
 import { Product } from "@/types";
+import ClientAddToCart from './ClientAddToCart';
 
 interface PageProps {
   params: Promise<{ id: string }>;
 }
 
 export default async function ProductPage({ params }: PageProps) {
-
   const { id } = await params;
   const product: Product = await getProduct(id);
-
-  
-
   const { title, price, image, rating, description, category } = product;
 
   return (
     <div className="container mx-auto px-4 py-8 bg-white rounded-lg mt-5">
       <div className="flex flex-col md:flex-row gap-8">
-        <div className="md:w-1/2 flex justify-center"> 
+        <div className="md:w-1/2 flex justify-center">
           <div className="relative w-full h-96">
             <Image
               src={image}
@@ -48,12 +44,7 @@ export default async function ProductPage({ params }: PageProps) {
           </div>
           <p className="text-xl text-gray-800 mb-4">${price.toFixed(2)}</p>
           <p className="text-gray-700 mb-8">{description}</p>
-          <button
-            type="button"
-            className="rounded-sm bg-yellow-400 p-4 text-lg font-medium hover:bg-yellow-500"
-          >
-            Add to cart
-          </button>
+          <ClientAddToCart product={product} />
         </div>
       </div>
     </div>

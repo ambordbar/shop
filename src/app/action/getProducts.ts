@@ -1,6 +1,6 @@
 "use server";
 
-import { Product, ProductSchema } from "@/types";
+import { Product, ProductSchema } from "../../types/index";
 import { CACHE_KEYS, CACHE_TTL, getFromCache, setInCache } from "@/lib/redis";
 
 export async function getProducts(): Promise<Product[]> {
@@ -13,9 +13,7 @@ export async function getProducts(): Promise<Product[]> {
     }
 
     // If not in cache, fetch from API
-    const res = await fetch("https://fakestoreapi.com/products", {
-      next: { revalidate: 3600 }, // Cache for 1 hour
-    });
+    const res = await fetch("https://fakestoreapi.com/products");
 
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);

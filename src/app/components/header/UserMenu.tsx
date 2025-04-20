@@ -3,8 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import ShoppingCart from "../Shopping cart/ShoppingCart";
 import { UserMenuItem } from "./types";
+import useCartStore from "../../api/Shopping cart/cartStore";
 
 interface UserMenuProps {
   items: UserMenuItem[];
@@ -13,11 +13,12 @@ interface UserMenuProps {
 export function UserMenu({ items }: UserMenuProps) {
   const [showPopUp, setShowPopUp] = useState(false);
 
+  const products = useCartStore((state) => state.products);
+  const totalItems = products.length;
+
   return (
     <div className="hidden md:relative md:block z-100">
       <div className="hidden md:relative md:flex md:items-center md:gap-4">
-        <ShoppingCart />
-
         <button
           type="button"
           className="relative w-10 h-10 overflow-hidden rounded-full border border-gray-300 shadow-inner flex items-center justify-center"
@@ -40,12 +41,14 @@ export function UserMenu({ items }: UserMenuProps) {
           className="absolute end-0 z-10 mt-0.5 w-56 divide-y divide-gray-100 rounded-md border border-gray-100 bg-white shadow-lg"
           role="menu"
         >
-
           <div className="p-2">
-            <button
-              type="submit"
+            <Link
+              href="/detailCartShop"
               className="flex justify-between items-center w-full rounded-lg px-4 py-2 text-sm text-green-700 hover:bg-green-50"
               role="menuitem"
+              onClick={() => {
+                setShowPopUp(false);
+              }}
             >
               <div className="flex items-center gap-2">
                 <svg
@@ -62,18 +65,20 @@ export function UserMenu({ items }: UserMenuProps) {
                     d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.5 7h11l-1.5-7M7 13h10"
                   />
                 </svg>
-                shop cart
+                <span>shop cart</span>
               </div>
-              <div>1</div>
-            </button>
+              <div>{totalItems}</div>
+            </Link>
           </div>
-
 
           <div className="p-2">
             {items.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={() => {
+                  setShowPopUp(false);
+                }}
                 className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                 role="menuitem"
               >
@@ -88,6 +93,9 @@ export function UserMenu({ items }: UserMenuProps) {
                 type="submit"
                 className="flex w-full items-center gap-2 rounded-lg px-4 py-2 text-sm text-red-700 hover:bg-red-50"
                 role="menuitem"
+                onClick={() => {
+                  setShowPopUp(false);
+                }}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

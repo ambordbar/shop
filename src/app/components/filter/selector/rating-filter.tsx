@@ -15,7 +15,7 @@ export default function RatingFilter() {
   return (
     <button
       onClick={toggleRating}
-      className={`px-4 py-2 border border-gray-400 rounded-lg flex items-center gap-2 ${
+      className={`px-4 py-2 border border-gray-300 rounded-lg flex items-center gap-2 ${
         isTopRated ? "bg-green-500 text-white border-green-500" : "bg-white"
       }`}
     >

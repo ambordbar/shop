@@ -1,6 +1,7 @@
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { Product } from "@/types";
 import { useFilterStore } from "../filter/filter-store";
+import { getCategories } from "@/app/action/getcategory";
 
 /**
  * Custom hook for filtering products based on various filter criteria
@@ -8,7 +9,7 @@ import { useFilterStore } from "../filter/filter-store";
  * @returns Filtered products and filter state
  */
 export function useProductFilters(products: Product[]) {
-  // Get filter state from the store
+  // Get filter state and actions from the store
   const {
     selectedCategory,
     selectedMinPrice,
@@ -16,6 +17,11 @@ export function useProductFilters(products: Product[]) {
     isTopRated,
     priceSort,
     searchQuery,
+    setSearchQuery,
+    setSelectedCategory,
+    setPriceRange,
+    setTopRated,
+    setPriceSort,
   } = useFilterStore((state) => ({
     selectedCategory: state.selectedCategory,
     selectedMinPrice: state.selectedMinPrice,
@@ -23,7 +29,59 @@ export function useProductFilters(products: Product[]) {
     isTopRated: state.isTopRated,
     priceSort: state.priceSort,
     searchQuery: state.searchQuery,
+    setSearchQuery: state.setSearchQuery,
+    setSelectedCategory: state.setSelectedCategory,
+    setPriceRange: state.setPriceRange,
+    setTopRated: state.setTopRated,
+    setPriceSort: state.setPriceSort,
   }));
+
+  // Read filter values from URL on page load and refresh
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    // Set search query
+    const searchQuery = params.get("q");
+    if (searchQuery) {
+      setSearchQuery(searchQuery);
+    }
+
+    // Set category with name
+    const categoryId = params.get("category");
+    if (categoryId) {
+      getCategories().then((categories) => {
+        const category = categories.find((cat) => cat.id === categoryId);
+        if (category) {
+          setSelectedCategory(category);
+        }
+      });
+    }
+
+    // Set price range
+    const minPrice = params.get("price[min]");
+    const maxPrice = params.get("price[max]");
+    if (minPrice && maxPrice) {
+      setPriceRange(Number(minPrice), Number(maxPrice));
+    }
+
+    // Set top rated
+    const topRated = params.get("top_rated");
+    if (topRated === "1") {
+      setTopRated(true);
+    }
+
+    // Set price sort
+    const sort = params.get("sort");
+    if (sort === "asc" || sort === "desc") {
+      setPriceSort(sort);
+    }
+  }, [
+    setPriceRange,
+    setPriceSort,
+    setSearchQuery,
+    setSelectedCategory,
+    setTopRated,
+  ]);
 
   // Filter products based on all criteria
   const filteredProducts = useMemo(() => {

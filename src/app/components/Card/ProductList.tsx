@@ -4,15 +4,18 @@ import { useState } from "react";
 import ProductCard from "./productCard";
 import { Product } from "@/types";
 import { useProductFilters } from "./useProductFilters";
+import Link from "next/link";
 
 interface ProductListProps {
   products: Product[];
   itemsPerPage?: number;
+  paggingView?: boolean;
 }
 
 export default function ProductList({
   products,
   itemsPerPage = 8,
+  paggingView = true,
 }: ProductListProps) {
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -50,7 +53,7 @@ export default function ProductList({
             ))}
           </div>
 
-          {totalPages > 1 && (
+          {totalPages > 1 && paggingView && (
             <div className="mt-8 flex justify-center">
               <nav className="flex items-center gap-2">
                 <button
@@ -92,6 +95,15 @@ export default function ProductList({
                 </button>
               </nav>
             </div>
+          )}
+          {!paggingView && (
+            <Link
+              href="/products"
+              className="rounded-md mt-4 flex justify-center items-center border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+              aria-label="see all products"
+            >
+              see all products
+            </Link>
           )}
         </>
       )}
