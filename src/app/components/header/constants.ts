@@ -9,6 +9,6 @@ export const navigationItems: NavItem[] = [
 
 export const userMenuItems: UserMenuItem[] = [
   { label: "My profile", href: "/profile" },
-  { label: "Billing summary", href: "/billing" },
+  { label: "order list", href: "/orders" },
   { label: "Team settings", href: "/team" },
 ];

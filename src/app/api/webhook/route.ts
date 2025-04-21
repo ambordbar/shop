@@ -1,62 +1,50 @@
 import { NextRequest, NextResponse } from "next/server";
-import Stripe from "stripe";
-import { db } from "@/lib/firebaseConfig";
-import { doc, getDoc } from "firebase/firestore";
+import { saveOrderFromUrl } from "@/app/action/orderManager";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-03-31.basil",
-});
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 export async function POST(req: NextRequest) {
-  const payload = await req.text();
-  const sig = req.headers.get("stripe-signature")!;
-
-  let event: Stripe.Event;
-
+  console.log("Webhook received");
   try {
-    event = stripe.webhooks.constructEvent(
-      payload,
-      sig,
-      process.env.STRIPE_WEBHOOK_SECRET!
-    );
-  } catch (err: unknown) {
-    const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
-    console.error("Webhook signature verification failed:", errorMessage);
-    return NextResponse.json({ error: errorMessage }, { status: 400 });
-  }
+    const buf = await req.arrayBuffer();
+    const payload = Buffer.from(buf).toString("utf8");
+    const event = JSON.parse(payload);
 
-  if (event.type === "checkout.session.completed") {
-    const session = event.data.object as Stripe.Checkout.Session;
-    const tempOrderId = session.metadata?.tempOrderId;
+    console.log("Event type:", event.type);
 
-    if (tempOrderId) {
+    if (event.type === "checkout.session.completed") {
+      const session = event.data.object;
+      const tempOrderId = session.metadata?.tempOrderId;
+
+      if (!tempOrderId) {
+        return NextResponse.json({ error: "No tempOrderId" }, { status: 400 });
+      }
+
       try {
-        // دریافت اطلاعات سفارش موقت از Firebase
-        const tempOrderRef = doc(db, "temp_orders", tempOrderId);
-        const tempOrderSnap = await getDoc(tempOrderRef);
-
-        if (tempOrderSnap.exists()) {
-          const orderData = tempOrderSnap.data();
-          // اینجا می‌توانید اطلاعات سفارش را برای ذخیره نهایی آماده کنید
-          const finalOrderData = {
-            ...orderData,
-            status: "completed",
-            paymentId: session.payment_intent,
-            paidAt: new Date(),
-          };
-
-          // اطلاعات آماده است برای ذخیره در جدول سفارش‌های نهایی
-          console.log("Order ready for final storage:", finalOrderData);
-        }
+        const orderData = await saveOrderFromUrl(session.id, tempOrderId);
+        return NextResponse.json({ success: true, order: orderData });
       } catch (error) {
-        console.error("Error processing webhook:", error);
+        console.error("Error processing order:", error);
         return NextResponse.json(
-          { error: "Error processing webhook" },
+          { error: "Failed to process order" },
           { status: 500 }
         );
       }
     }
-  }
 
-  return NextResponse.json({ received: true });
+    return NextResponse.json({ received: true });
+  } catch (error) {
+    console.error("Error processing webhook:", error);
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error ? error.message : "Failed to process webhook",
+      },
+      { status: 500 }
+    );
+  }
 }

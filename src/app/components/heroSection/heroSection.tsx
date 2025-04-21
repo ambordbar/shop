@@ -46,6 +46,8 @@ const HeroSection: React.FC = () => {
             height={400}
             className="w-full h-auto hidden lg:block rounded-2xl"
             priority
+            layout="responsive"
+            loading="lazy"
           />
         </div>
       </div>
