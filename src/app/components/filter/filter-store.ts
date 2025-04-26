@@ -1,6 +1,6 @@
 import { createWithEqualityFn } from "zustand/traditional";
 import { shallow } from "zustand/shallow";
-import { Category } from "@/types/category";
+import { Category } from "@/types";
 
 interface FilterState {
   // Configuration values

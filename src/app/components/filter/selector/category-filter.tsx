@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useFilterStore } from "../filter-store";
-import { Category } from "@/types/category";
+import { Category } from "@/types";
 
 export default function CategoryFilter({
   categories = [],

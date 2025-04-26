@@ -7,14 +7,10 @@ import RatingFilter from "./selector/rating-filter";
 import PriceSortFilter from "./selector/price-sort-filter";
 import { useFilterStore } from "./filter-store";
 import { useEffect } from "react";
-
-interface CategoryOption {
-  id: string;
-  name: string;
-}
+import { Category } from "@/types";
 
 interface FilterProps {
-  categories: CategoryOption[];
+  categories: Category[];
   minPrice: number;
   maxPrice: number;
   className?: string;

@@ -2,36 +2,15 @@ import { promises as fs } from "fs";
 import path from "path";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../../lib/firebaseConfig";
-
-export interface OrderData {
-  id: string;
-  stripeSessionId: string;
-  status: "pending" | "completed";
-  createdAt: string;
-  updatedAt: string;
-  total: number;
-  customerInfo: {
-    name: string;
-    address: string;
-    phone: string;
-  };
-  items: Array<{
-    id: string;
-    title: string;
-    price: number;
-    quantity: number;
-    image: string;
-  }>;
-  paymentStatus: string;
-}
+import { Order } from "@/types";
 
 interface OrdersFile {
-  orders: OrderData[];
+  orders: Order[];
 }
 
 const ORDERS_FILE = path.join(process.cwd(), "src/data/orders.json");
 
-export async function saveOrder(orderData: OrderData): Promise<void> {
+export async function saveOrder(orderData: Order): Promise<void> {
   try {
     let ordersFile: OrdersFile = { orders: [] };
 
@@ -49,14 +28,14 @@ export async function saveOrder(orderData: OrderData): Promise<void> {
 
     ordersFile.orders.push(orderData);
     await fs.writeFile(ORDERS_FILE, JSON.stringify(ordersFile, null, 2));
-    console.log("Order saved successfully:", orderData.id);
+    console.log("Order saved successfully:", orderData.uid);
   } catch (error) {
     console.error("Error saving order:", error);
     throw new Error("Failed to save order");
   }
 }
 
-export async function getOrders(): Promise<OrderData[]> {
+export async function getOrders(): Promise<Order[]> {
   try {
     const fileContent = await fs.readFile(ORDERS_FILE, "utf-8");
     const data: OrdersFile = JSON.parse(fileContent);
@@ -67,15 +46,15 @@ export async function getOrders(): Promise<OrderData[]> {
   }
 }
 
-export async function getOrderById(orderId: string): Promise<OrderData | null> {
+export async function getOrderById(orderId: string): Promise<Order | null> {
   const orders = await getOrders();
-  return orders.find((order) => order.id === orderId) || null;
+  return orders.find((order) => order.uid === orderId) || null;
 }
 
 export async function saveOrderFromUrl(
   sessionId: string,
   tempOrderId: string
-): Promise<OrderData> {
+): Promise<Order> {
   try {
     // خواندن اطلاعات سفارش موقت از Firebase
     const tempOrderRef = doc(db, "temp_orders", tempOrderId);
@@ -88,16 +67,15 @@ export async function saveOrderFromUrl(
     const tempOrder = snap.data();
 
     // ساخت آبجکت OrderData
-    const orderData: OrderData = {
-      id: sessionId,
+    const orderData: Order = {
+      uid: sessionId,
       stripeSessionId: sessionId,
       status: "completed",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
       total: tempOrder.total,
-      customerInfo: tempOrder.customerInfo,
+      shipping: tempOrder.customerInfo,
       items: tempOrder.items,
-      paymentStatus: "paid",
     };
 
     // ذخیره در فایل JSON

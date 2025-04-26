@@ -2,15 +2,22 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import useCartStore from "../../api/Shopping cart/cartStore";
 import Image from "next/image";
-import { OrderData } from "@/app/action/orderManager";
+import { Order } from "@/types";
 
 export default function OrderDetails() {
   const searchParams = useSearchParams();
-  const [order, setOrder] = useState<OrderData | null>(null);
+  const [order, setOrder] = useState<Order | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const removeAll = useCartStore((state) => state.removeAllProduct);
 
   useEffect(() => {
+    // Clear cart if clear_cart parameter is present
+    if (searchParams.get("clear_cart") === "true") {
+      removeAll();
+    }
+
     const verifyOrder = async () => {
       try {
         const sessionId = searchParams.get("session_id");
@@ -62,7 +69,7 @@ export default function OrderDetails() {
             <div className="flex justify-between items-center mb-4">
               <div>
                 <p className="text-sm text-gray-600">
-                  Order ID: <span className="font-medium">{order.id}</span>
+                  Order ID: <span className="font-medium">{order.uid}</span>
                 </p>
                 <p className="text-sm text-gray-600">
                   Date:{" "}
@@ -85,16 +92,14 @@ export default function OrderDetails() {
             </div>
 
             {/* Customer Info */}
-            <div className="border-t border-gray-100 pt-4">
+            <div className="mt-4">
               <h3 className="text-sm font-medium text-gray-900 mb-2">
                 Customer Information
               </h3>
               <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
-                <p>Name: {order.customerInfo.name}</p>
-                <p>Phone: {order.customerInfo.phone}</p>
-                <p className="col-span-2">
-                  Address: {order.customerInfo.address}
-                </p>
+                <p>Name: {order.shipping.name}</p>
+                <p>Phone: {order.shipping.phone}</p>
+                <p className="col-span-2">Address: {order.shipping.address}</p>
               </div>
             </div>
 
@@ -133,18 +138,17 @@ export default function OrderDetails() {
             </div>
 
             {/* Footer: Payment & Total */}
-            <div className="mt-4 flex justify-between items-center border-t border-gray-100 pt-4">
+            <div className="mt-6 flex justify-between items-center">
               <div className="text-sm text-gray-600">
                 Payment Status:{" "}
                 <span
                   className={`font-medium ${
-                    order.paymentStatus === "paid"
+                    order.status === "completed"
                       ? "text-green-600"
                       : "text-yellow-600"
                   }`}
                 >
-                  {order.paymentStatus.charAt(0).toUpperCase() +
-                    order.paymentStatus.slice(1)}
+                  {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                 </span>
               </div>
               <p className="text-lg font-medium text-gray-900">

@@ -1,6 +1,6 @@
 "use server";
 
-import { Category } from "../../types/category";
+import { Category } from "@/types";
 import { CACHE_KEYS, CACHE_TTL, getFromCache, setInCache } from "@/lib/redis";
 
 export async function getCategories(): Promise<Category[]> {

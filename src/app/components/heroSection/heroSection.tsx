@@ -47,7 +47,6 @@ const HeroSection: React.FC = () => {
             className="w-full h-auto hidden lg:block rounded-2xl"
             priority
             layout="responsive"
-            loading="lazy"
           />
         </div>
       </div>

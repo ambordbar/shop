@@ -1,0 +1,19 @@
+// vitest-setup.ts
+import "@testing-library/jest-dom";
+import "@testing-library/jest-dom";
+import { expect, afterEach, vi } from "vitest";
+import { cleanup } from "@testing-library/react";
+import * as matchers from "@testing-library/jest-dom/matchers";
+
+expect.extend(matchers);
+
+afterEach(() => {
+  cleanup();
+});
+
+vi.mock("next/server", () => ({
+  NextResponse: {
+    json: vi.fn(),
+    redirect: vi.fn(),
+  },
+}));

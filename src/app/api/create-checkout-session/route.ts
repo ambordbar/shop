@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
       quantity: item.quantity || 1,
     })),
     mode: "payment",
-    success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/orders?session_id={CHECKOUT_SESSION_ID}&order_id=${tempOrderId}`,
+    success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/orders?session_id={CHECKOUT_SESSION_ID}&order_id=${tempOrderId}&clear_cart=true`,
     cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/checkout`,
     metadata: {
       tempOrderId,
