@@ -1,5 +1,4 @@
 import { vi, describe, it, expect, beforeEach } from "vitest";
-import { getProducts } from "../../src/app/action/getProducts";
 import { getFromCache, setInCache } from "@/lib/redis";
 import { ProductsTestModel } from "./products.model";
 
